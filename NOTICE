@@ -1,0 +1,17 @@
+NOTICE
+
+env-permitting-rag-java
+Copyright (c) 2025 Andressa Raffler
+
+This product includes software developed by contributors and third parties.
+Attributions and license texts for third-party components are included in their
+respective LICENSE files or project pages. When distributing binaries, include
+this NOTICE file and retain original copyright and attribution notices.
+
+Third-party components (examples):
+- Spring Boot (Apache-2.0)
+- Spring AI (Apache-2.0)
+- Liquibase (Apache-2.0)
+- Apache PDFBox (Apache-2.0)
+- PostgreSQL JDBC (BSD-2-Clause)
+- Testcontainers (MIT)
