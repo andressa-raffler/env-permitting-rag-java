@@ -18,8 +18,6 @@ public class EmbeddingSmokeRunner {
             float[] resp = model.embed("hello world");
             long latency = System.currentTimeMillis() - start;
             List<Float> vec = new ArrayList<>();
-            // EmbeddingResponse resp2 = model.embed( "hello world");
-            // List<Float> vec2 = resp2.getResult().getOutput().get(0);
             vec.add(resp[0]);
             System.out.println("˜˜˜˜˜˜˜SMOKE TEST˜˜˜˜˜˜˜");
             System.out.println("Embedding vector size: " + vec.size());
