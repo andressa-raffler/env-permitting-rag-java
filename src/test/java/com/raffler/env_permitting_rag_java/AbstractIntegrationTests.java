@@ -40,7 +40,7 @@ public abstract class AbstractIntegrationTests {
 
         registry.add("spring.liquibase.change-log", () -> "classpath:/db/db.changelog-master.yaml");
         registry.add("spring.liquibase.default-schema", () -> "licgpt");
-        registry.add("spring.liquibase.liquibase-schema", () -> "licgpt");
+        registry.add("spring.liquibase.liquibase-schema", () -> "public");
         registry.add("spring.liquibase.parameters.schemaName", () -> "licgpt");
         registry.add("spring.liquibase.parameters.embeddingDims", () -> "1536");
         registry.add("spring.liquibase.parameters.ivfflatLists", () -> "100");
