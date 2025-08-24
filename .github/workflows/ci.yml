@@ -2,35 +2,49 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "**" ]
   pull_request:
-    branches: [ main ]
-
-permissions:
-  contents: read
+    branches: [ "**" ]
 
 jobs:
-  build-test:
+  build-and-unit-tests:
     runs-on: ubuntu-latest
-
+    env:
+      JAVA_VERSION: "21"
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      MAVEN_OPTS: "-Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
     steps:
       - name: Checkout
-        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      - name: Set up JDK 21 (Temurin) with cache
-        uses: actions/setup-java@c5195efecf7bdfc987ee8bae7a71cb8b11521c00 # v4
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '21'
-          cache: 'maven'
-      - name: Validate & test
-        run: |
-          mvn -B -ntp -q -DskipTests=false -Djacoco.skip=true clean test
-      - name: Upload surefire reports
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - name: Build & unit tests
+        run: ./mvnw -B -U -DskipTests=false test
+
+  integration-tests:
+    needs: build-and-unit-tests
+    runs-on: ubuntu-latest
+    env:
+      JAVA_VERSION: "21"
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      DOCKER_HOST: "unix:///var/run/docker.sock"
+      TESTCONTAINERS_RYUK_DISABLED: "false"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
         with:
-          name: surefire-reports
-          path: |
-            **/target/surefire-reports/**
-            **/target/failsafe-reports/**
-          if-no-files-found: ignore
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - name: Verify integration tests (Liquibase migrations on pgvector)
+        run: ./mvnw -B -P integrationTest verify
