@@ -21,9 +21,11 @@ Build a minimal Retrieval-Augmented Generation (RAG) assistant that answers envi
   **DoD:** Embedding vector dimension and latency validated in a local spike; API key does not leak to logs.
 
 ### Milestone 2 — Ingestion (PDF → chunks → embeddings → DB)
-- [ ] Define approach for PDF extraction (page-by-page for PoC; note future improvement for headings).
-- [ ] Define chunking strategy (size/overlap parameters).
-- [ ] Plan ingestion flow: read PDFs from `data/docs/`; insert `document_source`; generate embeddings; insert `document_chunk` with minimal metadata (`section`, optional `uf`).
+
+- [x] Define approach for PDF extraction (page-by-page for PoC; note future improvement for headings).
+- [x] Define chunking strategy (size/overlap parameters).
+- [x] Plan ingestion flow: read PDFs from `data/docs/`; insert `document_source`; generate embeddings; insert
+  `document_chunk` with minimal metadata (`section`, optional `uf`).
 - [ ] Define a simple reprocessing strategy (truncate or version).
   **DoD:** Ingesting 3–5 PDFs yields >50 chunks and all indexes are populated successfully.
 

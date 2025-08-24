@@ -4,6 +4,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,6 +12,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class PdfExtractor {
     private static final Logger log = LoggerFactory.getLogger(PdfExtractor.class);
     private final Path docsDir;
@@ -21,6 +23,10 @@ public class PdfExtractor {
 
     public PdfExtractor(Path docsDir) {
         this.docsDir = docsDir;
+    }
+
+    public Path getDocsDir() {
+        return docsDir;
     }
 
     public List<PageContent> extract(String fileName) {
