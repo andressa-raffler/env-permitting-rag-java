@@ -1,0 +1,55 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0005-unique-uri
+      author: andressa
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            schemaName: ${schemaName}
+            indexName: ux_document_source_uri
+      changes:
+        - createIndex:
+            schemaName: ${schemaName}
+            tableName: document_source
+            indexName: ux_document_source_uri
+            unique: true
+            columns:
+              - column:
+                  name: uri
+      rollback:
+        - dropIndex:
+            schemaName: ${schemaName}
+            tableName: document_source
+            indexName: ux_document_source_uri
+
+  - changeSet:
+      id: 0006-seed-sample
+      author: andressa
+      preConditions:
+        onFail: MARK_RAN
+      changes:
+        - sql:
+            splitStatements: false
+            sql: |
+              INSERT INTO ${schemaName}.document_source(id, uri, title, version, tags)
+              VALUES (gen_random_uuid(), 'file://data/docs/sample.pdf#p=1', 'Sample Environmental Rule', 'v1', '{}')
+              ON CONFLICT (uri) DO NOTHING;
+
+              INSERT INTO ${schemaName}.document_chunk(id, doc_id, chunk_index, text, metadata, embedding)
+              SELECT gen_random_uuid(), ds.id, 0,
+                     'For operating permits, the following documents are required: ...',
+                     '{"section":"Requirements","uf":"SP"}'::jsonb,
+                     ('[' || array_to_string(ARRAY(SELECT 0.0 FROM generate_series(1, ${embeddingDims})), ',') || ']')::vector
+              FROM ${schemaName}.document_source ds
+              WHERE ds.uri = 'file://data/docs/sample.pdf#p=1'
+              ON CONFLICT DO NOTHING;
+      rollback:
+        - delete:
+            schemaName: ${schemaName}
+            tableName: document_chunk
+            where: "chunk_index = 0 AND metadata->>'uf' = 'SP'"
+        - delete:
+            schemaName: ${schemaName}
+            tableName: document_source
+            where: "uri = 'file://data/docs/sample.pdf#p=1'"

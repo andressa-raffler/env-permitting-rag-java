@@ -1,0 +1,64 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0004-index-doc
+      author: andressa
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            schemaName: ${schemaName}
+            tableName: document_chunk
+            indexName: idx_document_chunk_doc
+      changes:
+        - createIndex:
+            schemaName: ${schemaName}
+            tableName: document_chunk
+            indexName: idx_document_chunk_doc
+            columns:
+              - column:
+                  name: doc_id
+              - column:
+                  name: chunk_index
+      rollback:
+        - dropIndex:
+            schemaName: ${schemaName}
+            tableName: document_chunk
+            indexName: idx_document_chunk_doc
+
+  - changeSet:
+      id: 0004b-index-meta-uf
+      author: andressa
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            schemaName: ${schemaName}
+            indexName: idx_document_chunk_meta_uf
+      changes:
+        - sql:
+            splitStatements: false
+            sql: CREATE INDEX IF NOT EXISTS idx_document_chunk_meta_uf ON ${schemaName}.document_chunk ((metadata->>'uf'));
+      rollback:
+        - dropIndex:
+            schemaName: ${schemaName}
+            tableName: document_chunk
+            indexName: idx_document_chunk_meta_uf
+
+  - changeSet:
+      id: 0004c-index-embedding
+      author: andressa
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          indexExists:
+            schemaName: ${schemaName}
+            indexName: idx_document_chunk_embedding
+      changes:
+        - sql:
+            splitStatements: false
+            sql: CREATE INDEX IF NOT EXISTS idx_document_chunk_embedding ON ${schemaName}.document_chunk USING ivfflat (embedding vector_cosine_ops) WITH (lists = ${ivfflatLists});
+      rollback:
+        - dropIndex:
+            schemaName: ${schemaName}
+            tableName: document_chunk
+            indexName: idx_document_chunk_embedding

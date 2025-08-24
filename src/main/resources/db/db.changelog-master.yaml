@@ -1,0 +1,21 @@
+databaseChangeLog:
+  # Default parameters (override via Spring: spring.liquibase.parameters.*)
+  - property:
+      name: schemaName
+      value: licgpt
+  - property:
+      name: embeddingDims
+      value: 1536
+  - property:
+      name: ivfflatLists
+      value: 100
+
+  # Ordered includes
+  - include:
+      file: classpath:/db/changelog/0000-schema.yaml
+  - include:
+      file: classpath:/db/changelog/0001-extension-and-tables.yaml
+  - include:
+      file: classpath:/db/changelog/0002-indexes.yaml
+  - include:
+      file: classpath:/db/changelog/0003-seed-sample.yaml

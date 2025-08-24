@@ -1,0 +1,124 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0001-create-vector-extension
+      author: andressa
+      preConditions:
+        onFail: MARK_RAN
+        dbms:
+          type: postgresql
+      changes:
+        - sql: CREATE EXTENSION IF NOT EXISTS vector;
+      rollback:
+        - sql: DROP EXTENSION IF EXISTS vector;
+
+  - changeSet:
+      id: 0001b-create-pgcrypto-extension
+      author: andressa
+      preConditions:
+        onFail: MARK_RAN
+        dbms:
+          type: postgresql
+      changes:
+        - sql: CREATE EXTENSION IF NOT EXISTS pgcrypto;
+      rollback:
+        - sql: DROP EXTENSION IF EXISTS pgcrypto;
+
+  - changeSet:
+      id: 0002-create-document-source
+      author: andressa
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            schemaName: ${schemaName}
+            tableName: document_source
+      changes:
+        - createTable:
+            schemaName: ${schemaName}
+            tableName: document_source
+            remarks: "Registry of original documents (PDFs, pages)"
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: uri
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: title
+                  type: TEXT
+              - column:
+                  name: version
+                  type: TEXT
+              - column:
+                  name: tags
+                  type: TEXT[]
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: now()
+      rollback:
+        - dropTable:
+            schemaName: ${schemaName}
+            tableName: document_source
+
+  - changeSet:
+      id: 0003-create-document-chunk
+      author: andressa
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            schemaName: ${schemaName}
+            tableName: document_chunk
+      changes:
+        - createTable:
+            schemaName: ${schemaName}
+            tableName: document_chunk
+            remarks: "Chunked text + metadata + embedding vector"
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: doc_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: chunk_index
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: text
+                  type: TEXT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: metadata
+                  type: JSONB
+              - column:
+                  name: embedding
+                  type: "VECTOR(${embeddingDims})"
+        - addForeignKeyConstraint:
+            baseTableSchemaName: ${schemaName}
+            baseTableName: document_chunk
+            baseColumnNames: doc_id
+            referencedTableSchemaName: ${schemaName}
+            referencedTableName: document_source
+            referencedColumnNames: id
+            constraintName: fk_document_chunk_source
+            onDelete: CASCADE
+      rollback:
+        - dropTable:
+            schemaName: ${schemaName}
+            tableName: document_chunk
