@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Integration checks for Liquibase migrations (schema, tables, indexes)
  * and a minimal insert to validate vector column usage.
- * <p>
+ *
  * Notes on style:
  * - Centralized constants for schema & embedding dims
  * - Small helper methods for existence checks
