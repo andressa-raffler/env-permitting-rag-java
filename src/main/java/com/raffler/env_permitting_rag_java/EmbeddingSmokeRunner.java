@@ -8,14 +8,27 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 
 @Configuration
+@Profile("smoke")
 public class EmbeddingSmokeRunner {
     private static final Logger log = LoggerFactory.getLogger(EmbeddingSmokeRunner.class);
+
+    @Bean
+    CommandLineRunner smoke(org.springframework.ai.embedding.EmbeddingModel model) {
+        return args -> {
+            long t0 = System.nanoTime();
+            var vectors = model.embed(java.util.List.of("hello world"));
+            long latencyMs = (System.nanoTime() - t0) / 1_000_000;
+            System.out.println("SMOKE: dim=" + vectors.get(0).length + " latencyMs=" + latencyMs);
+        };
+    }
+
 
     @Bean
     @ConditionalOnProperty(name = "app.smoke.enabled", havingValue = "true")
