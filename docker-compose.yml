@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: env-permitting-rag-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: licgpt
+      POSTGRES_USER: licgpt
+      POSTGRES_PASSWORD: licgpt
+      TZ: America/Sao_Paulo
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    # Optional tuning (uncomment if needed)
+    # command:
+    #   - "-c"
+    #   - "shared_buffers=256MB"
+    #   - "-c"
+    #   - "max_connections=150"
+
+volumes:
+  db_data:
+    name: env-permitting-rag-db-data
