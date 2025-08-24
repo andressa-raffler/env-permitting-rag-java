@@ -14,9 +14,10 @@ Build a minimal Retrieval-Augmented Generation (RAG) assistant that answers envi
   **DoD:** Local stack starts and migrations apply without errors; DB is reachable.
 
 ### Milestone 1 — AI configuration (models & secrets)
-- [ ] Choose provider and models (chat + embeddings) and embedding dimension (parametrized).
-- [ ] Define secret management approach (env vars, vault, etc.).
-- [ ] Plan a smoke test to verify embeddings and latency (no code in this document).
+
+- [X] Choose provider and models (chat + embeddings) and embedding dimension (parametrized).
+- [X] Define secret management approach (env vars, vault, etc.).
+- [X] Plan a smoke test to verify embeddings and latency (no code in this document).
   **DoD:** Embedding vector dimension and latency validated in a local spike; API key does not leak to logs.
 
 ### Milestone 2 — Ingestion (PDF → chunks → embeddings → DB)

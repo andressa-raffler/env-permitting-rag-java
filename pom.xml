@@ -3,7 +3,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.5</version>
+        <version>3.3.4</version>
         <relativePath/>
     </parent>
     <groupId>com.raffler</groupId>
@@ -46,6 +46,11 @@
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-openai</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
         </dependency>
@@ -56,10 +61,6 @@
         <!--
          Spring AI: OpenAI starter (auto-configures chat & embeddings)
         -->
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-starter-model-openai</artifactId>
-        </dependency>
         <!--  PDF extraction for ingestion  -->
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
