@@ -19,3 +19,5 @@ databaseChangeLog:
       file: classpath:/db/changelog/0002-indexes.yaml
   - include:
       file: classpath:/db/changelog/0003-seed-sample.yaml
+  - include:
+      file: classpath:/db/changelog/0004-ingestion-versioning.yaml

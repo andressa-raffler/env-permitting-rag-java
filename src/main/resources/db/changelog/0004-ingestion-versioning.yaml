@@ -1,0 +1,62 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0007-add-obsolete-column
+      author: assistant
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            schemaName: ${schemaName}
+            tableName: document_source
+            columnName: obsolete
+      changes:
+        - addColumn:
+            schemaName: ${schemaName}
+            tableName: document_source
+            columns:
+              - column:
+                  name: obsolete
+                  type: BOOLEAN
+                  defaultValueBoolean: false
+      rollback:
+        - dropColumn:
+            schemaName: ${schemaName}
+            tableName: document_source
+            columnName: obsolete
+
+  - changeSet:
+      id: 0008-update-unique-uri-index
+      author: assistant
+      preConditions:
+        onFail: MARK_RAN
+        indexExists:
+          schemaName: ${schemaName}
+          indexName: ux_document_source_uri
+      changes:
+        - dropIndex:
+            schemaName: ${schemaName}
+            tableName: document_source
+            indexName: ux_document_source_uri
+        - createIndex:
+            schemaName: ${schemaName}
+            tableName: document_source
+            indexName: ux_document_source_uri_version
+            unique: true
+            columns:
+              - column:
+                  name: uri
+              - column:
+                  name: version
+      rollback:
+        - dropIndex:
+            schemaName: ${schemaName}
+            tableName: document_source
+            indexName: ux_document_source_uri_version
+        - createIndex:
+            schemaName: ${schemaName}
+            tableName: document_source
+            indexName: ux_document_source_uri
+            unique: true
+            columns:
+              - column:
+                  name: uri
