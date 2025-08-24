@@ -4,15 +4,8 @@ databaseChangeLog:
       author: andressa
       preConditions:
         - onFail: MARK_RAN
-        - dbms:
-            type: postgresql
-        - not:
-            - schemaExists:
-                schemaName: ${schemaName}
+        - dbms: { type: postgresql }
       changes:
-        - createSchema:
-            schemaName: ${schemaName}
+        - sql: CREATE SCHEMA IF NOT EXISTS ${schemaName};
       rollback:
-        - dropSchema:
-            schemaName: ${schemaName}
-            cascade: true
+        - sql: DROP SCHEMA IF EXISTS ${schemaName} CASCADE;

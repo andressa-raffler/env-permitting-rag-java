@@ -3,9 +3,9 @@ databaseChangeLog:
       id: 0001-create-vector-extension
       author: andressa
       preConditions:
-        - onFail: MARK_RAN
-        - dbms:
-            type: postgresql
+        onFail: MARK_RAN
+        dbms:
+          type: postgresql
       changes:
         - sql: CREATE EXTENSION IF NOT EXISTS vector;
       rollback:
@@ -15,9 +15,9 @@ databaseChangeLog:
       id: 0001b-create-pgcrypto-extension
       author: andressa
       preConditions:
-        - onFail: MARK_RAN
-        - dbms:
-            type: postgresql
+        onFail: MARK_RAN
+        dbms:
+          type: postgresql
       changes:
         - sql: CREATE EXTENSION IF NOT EXISTS pgcrypto;
       rollback:
@@ -26,6 +26,12 @@ databaseChangeLog:
   - changeSet:
       id: 0002-create-document-source
       author: andressa
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            schemaName: ${schemaName}
+            tableName: document_source
       changes:
         - createTable:
             schemaName: ${schemaName}
@@ -64,6 +70,12 @@ databaseChangeLog:
   - changeSet:
       id: 0003-create-document-chunk
       author: andressa
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            schemaName: ${schemaName}
+            tableName: document_chunk
       changes:
         - createTable:
             schemaName: ${schemaName}
