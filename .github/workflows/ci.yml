@@ -12,7 +12,6 @@ jobs:
     env:
       JAVA_VERSION: "21"
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      # Optional: speed up Maven & make logs cleaner
       MAVEN_OPTS: "-Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
     steps:
       - name: Checkout
@@ -34,9 +33,7 @@ jobs:
     env:
       JAVA_VERSION: "21"
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      # Testcontainers uses Docker-in-Docker on GitHub runners by default
       DOCKER_HOST: "unix:///var/run/docker.sock"
-      # Optional: avoid flakiness in some environments
       TESTCONTAINERS_RYUK_DISABLED: "false"
     steps:
       - name: Checkout
