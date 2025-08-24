@@ -1,4 +1,4 @@
-package com.raffler.envpermittingragjava;
+package com.raffler.env_permitting_rag_java;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

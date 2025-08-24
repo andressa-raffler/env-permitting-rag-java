@@ -106,4 +106,35 @@
     <!--
      If your proxy hasn't synced 1.0.1 yet, temporarily swap the BOM version to 1.0.0
     -->
+
+    <profiles>
+        <profile>
+            <id>integrationTest</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <includes>
+                                <include>**/*IT.java</include>
+                                <include>**/*ITCase.java</include>
+                            </includes>
+                            <systemPropertyVariables>
+                                <spring.profiles.active>integrationTest</spring.profiles.active>
+                            </systemPropertyVariables>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

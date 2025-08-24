@@ -6,48 +6,48 @@ on:
   pull_request:
     branches: [ "**" ]
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build-and-unit-tests:
+  unit-tests:
     runs-on: ubuntu-latest
-    env:
-      JAVA_VERSION: "21"
-      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      # Optional: speed up Maven & make logs cleaner
-      MAVEN_OPTS: "-Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
+        uses: actions/checkout@<SHA>
+      - name: Set up JDK 21
+        uses: actions/setup-java@<SHA>
         with:
           distribution: temurin
-          java-version: ${{ env.JAVA_VERSION }}
+          java-version: 21
           cache: maven
-
-      - name: Build & unit tests
+      - name: Build & test (unit)
         run: ./mvnw -B -U -DskipTests=false test
 
   integration-tests:
-    needs: build-and-unit-tests
+    needs: unit-tests
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.fork == false }}
     env:
-      JAVA_VERSION: "21"
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-      # Testcontainers uses Docker-in-Docker on GitHub runners by default
+      JAVA_VERSION: "21"
       DOCKER_HOST: "unix:///var/run/docker.sock"
-      # Optional: avoid flakiness in some environments
-      TESTCONTAINERS_RYUK_DISABLED: "false"
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK ${{ env.JAVA_VERSION }}
-        uses: actions/setup-java@v4
+        uses: actions/checkout@<SHA>
+      - name: Set up JDK 21
+        uses: actions/setup-java@<SHA>
         with:
           distribution: temurin
           java-version: ${{ env.JAVA_VERSION }}
           cache: maven
-
-      - name: Verify integration tests (Liquibase migrations on pgvector)
+      - name: Validate OPENAI_API_KEY presence
+        run: |
+          if [ -z "${OPENAI_API_KEY}" ]; then
+            echo "Missing OPENAI_API_KEY secret"; exit 1; fi
+      - name: Verify integration tests (Liquibase + Testcontainers)
         run: ./mvnw -B -P integrationTest verify
