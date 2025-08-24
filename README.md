@@ -37,6 +37,9 @@ docker compose up -d
 ```bash
 ./mvnw spring-boot:run -Dspring-boot.run.arguments=ingest
 ```
+> The ingestion step defaults to replacing existing rows for a given URI.
+> Set `app.ingestion.strategy=versioned` to keep older rows marked as
+> `obsolete` instead of deleting them.
 
 3) **Start the API**
 ```bash
