@@ -1,28 +1,27 @@
 package com.raffler.env_permitting_rag_java;
 
-import org.springframework.ai.embedding.EmbeddingModel;
+import org.springframework.ai.openai.OpenAiEmbeddingModel;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import java.time.Duration;
-import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
-@SpringBootApplication
+@Configuration
 public class EmbeddingSmokeRunner {
 
-    public static void main(String[] args) {
-        SpringApplication.run(EmbeddingSmokeRunner.class, args);
-    }
-
     @Bean
-    CommandLineRunner smoke(EmbeddingModel model) {
+    CommandLineRunner smoke(OpenAiEmbeddingModel model) {
         return args -> {
-            Instant start = Instant.now();
-            float[] vec = model.embed("hello world").clone();
-            long ms = Duration.between(start, Instant.now()).toMillis();
-            System.out.printf("--------- SMOKE TEST --------- size=%d latency=%dms%n", vec.length, ms);
+            long start = System.currentTimeMillis();
+            float[] resp = model.embed("hello world");
+            long latency = System.currentTimeMillis() - start;
+            List<Float> vec = new ArrayList<>();
+            vec.add(resp[0]);
+            System.out.println("Embedding vector size: " + vec.size());
+            System.out.println("Latency: " + latency + " ms");
         };
     }
+
 }
