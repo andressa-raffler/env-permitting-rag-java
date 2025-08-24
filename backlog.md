@@ -9,7 +9,7 @@ Build a minimal Retrieval-Augmented Generation (RAG) assistant that answers envi
 - [X] Create repository (README with objective, scope, and PoC limits).
 - [X] Define Maven project (parent, Java version, dependencies list) — no code yet.
 - [X] Prepare Docker Compose with Postgres pgvector (service definition complete).
-- [ ] Prepare Liquibase changelog plan (extension `vector`, tables `document_source` and `document_chunk`, indexes).
+- [X] Prepare Liquibase changelog plan (extension `vector`, tables `document_source` and `document_chunk`, indexes).
 - [X] Draft `application.yml` structure (profile `local`), without secrets.
   **DoD:** Local stack starts and migrations apply without errors; DB is reachable.
 
