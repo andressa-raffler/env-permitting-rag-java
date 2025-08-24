@@ -19,6 +19,7 @@ public class EmbeddingSmokeRunner {
             long latency = System.currentTimeMillis() - start;
             List<Float> vec = new ArrayList<>();
             vec.add(resp[0]);
+            System.out.println("˜˜˜˜˜˜˜SMOKE TEST˜˜˜˜˜˜˜");
             System.out.println("Embedding vector size: " + vec.size());
             System.out.println("Latency: " + latency + " ms");
         };
