@@ -64,7 +64,7 @@ spring:
     username: licgpt
     password: licgpt
   liquibase:
-    change-log: classpath:/db/changelog/db.changelog-master.yaml
+    change-log: classpath:/db/db.changelog-master.yaml
 
   ai:
     # OpenAI example (swap for Azure/Bedrock/Anthropic if needed)

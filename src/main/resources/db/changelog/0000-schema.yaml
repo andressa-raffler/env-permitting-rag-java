@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0000-create-schema
+      author: andressa
+      preConditions:
+        - onFail: MARK_RAN
+        - dbms:
+            type: postgresql
+        - not:
+            - schemaExists:
+                schemaName: ${schemaName}
+      changes:
+        - createSchema:
+            schemaName: ${schemaName}
+      rollback:
+        - dropSchema:
+            schemaName: ${schemaName}
+            cascade: true

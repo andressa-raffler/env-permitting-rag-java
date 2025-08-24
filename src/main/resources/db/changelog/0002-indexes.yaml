@@ -1,0 +1,38 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0004-indexes
+      author: andressa
+      changes:
+        - createIndex:
+            schemaName: ${schemaName}
+            tableName: document_chunk
+            indexName: idx_document_chunk_doc
+            unique: false
+            columns:
+              - column:
+                  name: doc_id
+              - column:
+                  name: chunk_index
+
+        # JSONB metadata filter (example: metadata->>'uf')
+        - sql:
+            splitStatements: false
+            sql: CREATE INDEX IF NOT EXISTS idx_document_chunk_meta_uf ON ${schemaName}.document_chunk ((metadata->>'uf'));
+
+        # IVFFLAT vector index for cosine similarity
+        - sql:
+            splitStatements: false
+            sql: CREATE INDEX IF NOT EXISTS idx_document_chunk_embedding ON ${schemaName}.document_chunk USING ivfflat (embedding vector_cosine_ops) WITH (lists = ${ivfflatLists});
+      rollback:
+        - dropIndex:
+            indexName: idx_document_chunk_doc
+            tableName: document_chunk
+            schemaName: ${schemaName}
+        - dropIndex:
+            indexName: idx_document_chunk_meta_uf
+            tableName: document_chunk
+            schemaName: ${schemaName}
+        - dropIndex:
+            indexName: idx_document_chunk_embedding
+            tableName: document_chunk
+            schemaName: ${schemaName}
