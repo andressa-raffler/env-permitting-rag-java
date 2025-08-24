@@ -13,7 +13,7 @@ This PoC answers questions about environmental permitting by retrieving the most
 - **Core:** Spring Boot API (`/api/ask`) + Spring AI (chat & embeddings) + Postgres/pgvector (vector search).
 - **Output:** JSON with `answer`, `citations[]`, `usage.latency_ms`.
 
-> Sprint plan & acceptance criteria live in **[/doc/backlog.md](backlog.md)**.
+> Sprint plan & acceptance criteria live in **[backlog.md](doc/backlog.md)**.
 
 ---
 

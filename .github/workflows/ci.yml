@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [ "**" ]
+  pull_request:
+    branches: [ "**" ]
+
+jobs:
+  build-and-unit-tests:
+    runs-on: ubuntu-latest
+    env:
+      JAVA_VERSION: "21"
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      # Optional: speed up Maven & make logs cleaner
+      MAVEN_OPTS: "-Xmx2g -XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - name: Build & unit tests
+        run: ./mvnw -B -U -DskipTests=false test
+
+  integration-tests:
+    needs: build-and-unit-tests
+    runs-on: ubuntu-latest
+    env:
+      JAVA_VERSION: "21"
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      # Testcontainers uses Docker-in-Docker on GitHub runners by default
+      DOCKER_HOST: "unix:///var/run/docker.sock"
+      # Optional: avoid flakiness in some environments
+      TESTCONTAINERS_RYUK_DISABLED: "false"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ env.JAVA_VERSION }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: maven
+
+      - name: Verify integration tests (Liquibase migrations on pgvector)
+        run: ./mvnw -B -P integrationTest verify
